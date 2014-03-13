@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head>
+<script src="lib/jquery.min.js"></script>
+<script src="lib/sha1.js"></script>
+<script src="lib/ByteBuffer.min.js"></script>
+<script src="network.js"></script>
+<script src="game.js"></script>
+<link type="text/css" href="index.css" rel="Stylesheet"/>
+<title>Kingdom</title>
+ 
+</head>
+<body>
+	<div id="login-window">
+		<div id="login">
+			<div id="login-messagebox"></div>
+			<input type="text" id="login-username" class="login-window-field" placeholder="Username"></input> 
+			<input type="password" id="login-password" class="login-window-field" placeholder="Password"></input> 
+			<button class="connect-button" onclick="login();">Connect</button>
+			<button class="connect-button" onclick="displayRegister();">Register</button>
+		</div>
+		<div id="register" style="display:none;">
+			<div id="register-messagebox"></div>
+			<input type="text" id="register-username" class="login-window-field" placeholder="Account name"></input> 
+			<input type="password" id="register-password" class="login-window-field" placeholder="Password"></input> 
+			<input type="password" id="register-password_reapeat" class="login-window-field" placeholder="Password"></input> 
+			<input type="text" id="register-email" class="login-window-field" placeholder="E-mail"></input> 
+			<button class="connect-button" onclick="register();">Register</button>
+			<button class="connect-button" onclick="displayLogin();">Back</button>
+		</div>
+	</div>
+</body>
+</html>

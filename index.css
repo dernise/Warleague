@@ -1,0 +1,54 @@
+body {
+    font-family:Arial, Helvetica, sans-serif;
+    background-image: url(images/background.jpg);
+    background-repeat: no-repeat; 
+    background-attachment: fixed; 
+    background-size: cover; 
+}
+
+input{
+    display:block; 
+    margin:auto;
+    width:350px;
+    height:30px;
+    border-radius: 5px;    
+    border:1px solid #dfdfdf;
+}
+
+input.login-window-field{
+    margin-top:20px;
+}
+
+.alert-message{
+    display: block;
+    width: 350px;
+    height: 28px;
+    color:white;
+    margin:auto;
+    margin-top: 20px;
+    text-align: top;  
+    padding-top: 12px;  
+}
+
+button.connect-button{
+    display:block;
+    margin:auto;
+    border: 1px solid white;
+    margin-top: 20px;
+    width: 350px;
+    height: 40px;
+    background-color: #3498db;
+    color: white;
+    font-size: 15px;
+}
+
+#login-window{
+    width:415px;
+    background-color: #f3f3f3;
+    margin: 10% auto auto auto;
+    border: 13px solid rgba(0, 0, 0, 0.68);
+    -webkit-background-clip: padding-box; /* for Safari */
+    background-clip: padding-box; 
+    text-align: center;
+    padding-bottom: 20px;
+}
