@@ -47,7 +47,7 @@ var Network = function(ip, port){
 
     var result = reader.readUint8();
     switch(result){
-      case 1: displayValidate("Sucessfully connected"); break;
+      case 1: displayValidate("Sucessfully connected"); window.startGame(); break;
       case 2: displayError("Username or password is invalid"); break;
     }   
     

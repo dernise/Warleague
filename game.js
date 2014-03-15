@@ -63,3 +63,8 @@ function register(){
     $("#register-messagebox").html("<div class=\"alert-message\" style=\"background-color:#e74c3c;\">" + error + "</div>");
   }
 }
+
+function startGame(){
+  $("#contact-bar").css("display", "block");
+  $("#login-window").hide();
+}
