@@ -31,7 +31,7 @@ function login(){
 
 function register(){
   var nameRegex = /^[a-zA-Z\-]+$/;
-  var emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  var emailRegex = /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,4}/;
   var username = $("#register-username").val();
   var password = $("#register-password").val();
   var password_r = $("#register-password_reapeat").val();
