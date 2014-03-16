@@ -1,6 +1,6 @@
 body {
     font-family:Arial, Helvetica, sans-serif;
-    background-image: url(images/background.jpg);
+    background-color: #202E3D;
     background-repeat: no-repeat; 
     background-attachment: fixed; 
     background-size: cover; 
@@ -58,7 +58,7 @@ button.connect-button{
     position: absolute;
     top: 54px;
     width: 342px;
-    background: #2c3e50;
+    background: #34495e;
     z-index: 2;
     height: 871px; 
     left: 1575px; 
@@ -78,4 +78,14 @@ button.connect-button{
     z-index: 20;
     overflow: hidden;
     width: 1921px;
+}
+
+#chat-input{
+    position:absolute;
+    border-radius: 4px;
+    bottom:12px;
+    left:10px;
+    height:30px;
+    width:320px;
+    background-color: #2c3e50;
 }
