@@ -51,8 +51,10 @@ var WarleagueUI = function(){
    * Sends a message to the server
    */
   this.sendMessage = function(event, ref){
-    if(event.keyCode == 13)
+    if(event.keyCode == 13){
       socketClient.sendMessage(ref.chatinput.value);
+      $("#chat-input").val('');
+    }
   }
 
   /*
@@ -60,7 +62,6 @@ var WarleagueUI = function(){
    */
   this.appendMessage = function(message){
     $('<div class=\"chat-message\"></div>').text(message).appendTo('#chat-messages'); 
-    $("#chat-input").val('');
     if($("#chat-messages").scrollTop() + $("#chat-messages").height() >= ($("#chat-messages")[0].scrollHeight - 50)) {
       $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
     } 
