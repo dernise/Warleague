@@ -14,6 +14,7 @@ var Network = function(ip, port){
     {
       case 2: handleLoginAnswer(bytearray); break;
       case 4: handleRegisterAnswer(bytearray); break;
+      case 6: handleMessageAnswer(bytearray); break;
       default:
         alert("Received a wrong packet")
     }
@@ -38,6 +39,25 @@ var Network = function(ip, port){
     this.socket.send(bb.toArrayBuffer());  
   };
 
+  this.sendMessage = function(message){
+    var bb = new ByteBuffer();
+    bb.BE();
+    bb.writeInt8(5);
+    bb.writeCString(message);
+    this.socket.send(bb.toArrayBuffer()); 
+  };
+
+  var handleMessageAnswer = function(packet){
+    var reader = ByteBuffer.wrap(packet);
+    var opcode = reader.readUint8();  
+
+    if(opcode != 6)
+      return;    
+
+    var text = reader.readCString();
+    window.uiManager.appendMessage(text);
+  };
+
   var handleLoginAnswer = function(packet){
     var reader = ByteBuffer.wrap(packet);
     var opcode = reader.readUint8();  
@@ -47,7 +67,7 @@ var Network = function(ip, port){
 
     var result = reader.readUint8();
     switch(result){
-      case 1: window.startGame(); break;
+      case 1: window.uiManager.startGame(); break;
       case 2: displayError("Username or password is invalid"); break;
     }   
 

@@ -18,8 +18,8 @@
 			<div id="login-messagebox"></div>
 			<input type="text" id="login-username" class="login-window-field" placeholder="Username"></input> 
 			<input type="password" id="login-password" class="login-window-field" placeholder="Password"></input> 
-			<button class="connect-button" onclick="login();">Connect</button>
-			<button class="connect-button" onclick="displayRegister();">Register</button>
+			<button class="connect-button" onclick="uiManager.login();">Connect</button>
+			<button class="connect-button" onclick="uiManager.displayRegister();">Register</button>
 		</div>
 		<div id="register" style="display:none;">
 			<div id="register-messagebox"></div>
@@ -27,13 +27,19 @@
 			<input type="password" id="register-password" class="login-window-field" placeholder="Password"></input> 
 			<input type="password" id="register-password_reapeat" class="login-window-field" placeholder="Password"></input> 
 			<input type="text" id="register-email" class="login-window-field" placeholder="E-mail"></input> 
-			<button class="connect-button" onclick="register();">Register</button>
-			<button class="connect-button" onclick="displayLogin();">Back</button>
+			<button class="connect-button" onclick="uiManager.register();">Register</button>
+			<button class="connect-button" onclick="uiManager.displayLogin();">Back</button>
 		</div>
 	</div>
 	<div id="header"></div>
 	<div id="chat">
-		<div id="chat-input"></div>
+		<div id="chat-mesages">
+		</div>
+		<div id="chat-messagebox">
+			<form class="chat-input-form" onsubmit="return false">
+				<input type="text" name="chatinput" id="chat-input" onkeydown="uiManager.sendMessage(event, this.form);" placeholder="Enter you message here"/>
+			</form>
+		</div>
 	</div>
 </body>
 </html>
