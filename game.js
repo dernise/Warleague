@@ -86,6 +86,9 @@ var WarleagueUI = function(){
     }
   };
 
+  /*
+   * Create a new account
+   */
   this.register = function(){
     var nameRegex = /^[a-zA-Z\-]+$/;
     var emailRegex = /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,4}/;
