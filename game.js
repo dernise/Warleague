@@ -18,7 +18,7 @@ var WarleagueUI = function(){
     var chat_messages_height = $(window).height() - 115;
     $("#chat").css("left", chat_left+ "px");
     $("#chat").css("height", chat_height + "px");
-    $("#chat-mesages").css("height", chat_messages_height +"px");
+    $("#chat-messages").css("height", chat_messages_height +"px");
     $("#header").css("width", menu_width + "px");
   };
 
@@ -59,8 +59,11 @@ var WarleagueUI = function(){
    * Append a message to the chat
    */
   this.appendMessage = function(message){
-    $('<div class=\"chat-message\"></div>').text(message).appendTo('#chat-mesages'); 
+    $('<div class=\"chat-message\"></div>').text(message).appendTo('#chat-messages'); 
     $("#chat-input").val('');
+    if($("#chat-messages").scrollTop() + $("#chat-messages").height() >= ($("#chat-messages")[0].scrollHeight - 50)) {
+      $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
+    } 
   };
 
   /*
@@ -125,6 +128,6 @@ $( window ).resize(function() { //Resize chat
     var chat_messages_height = $(window).height() - 115;
     $("#chat").css("left", chat_left+ "px");
     $("#chat").css("height", chat_height + "px");
-    $("#chat-mesages").css("height", chat_messages_height +"px");
+    $("#chat-messages").css("height", chat_messages_height +"px");
     $("#header").css("width", menu_width + "px");
 });
