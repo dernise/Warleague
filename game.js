@@ -1,7 +1,29 @@
 $(document).ready(function() {
+  //Setting game windows
+  var chat_height = $( window ).height() - 55;
+  var chat_left = $( window ).width() - 342;
+  var menu_width = $( window ).width();
+  $("#chat").css("left", chat_left+ "px");
+  $("#chat").css("height", chat_height + "px");
+  $("#header").css("width", menu_width + "px");
   //initialise network
   window.socketClient = new Network("realmd.warleague.fr", 8080);
 });
+
+$( window ).resize(function() { //Resize chat
+  var chat_height = $( window ).height() - 55;
+  var chat_left = $( window ).width() - 342;
+  var menu_width = $( window ).width();
+  $("#chat").css("left", chat_left+ "px");
+  $("#chat").css("height", chat_height + "px");
+  $("#header").css("width", menu_width + "px");
+});
+
+function startGame(){
+  $("#header").css("display", "block");
+  $("#chat").css("display", "block");
+  $("#login-window").hide();
+}
 
 function displayRegister(){
   $('#login').hide();  
@@ -62,9 +84,4 @@ function register(){
   function displayError(error){
     $("#register-messagebox").html("<div class=\"alert-message\" style=\"background-color:#e74c3c;\">" + error + "</div>");
   }
-}
-
-function startGame(){
-  $("#contact-bar").css("display", "block");
-  $("#login-window").hide();
 }
