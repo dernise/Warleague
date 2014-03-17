@@ -57,7 +57,7 @@ var Network = function(ip, port){
   };
 
   /* 
-   * yo, this shit sends the fucking message bitch 
+   * Sends the chat message
    */
   this.sendMessage = function(message){
     var bb = new ByteBuffer();
