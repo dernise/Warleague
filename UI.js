@@ -14,6 +14,9 @@ var WarleagueUI = function(){
     $("#header").css("width", menu_width + "px");
   };
 
+  var smileys = [{"syntax":":)", "replacement":"<img src=\"images/smile.png\"/>"},
+                  {"syntax":"(ci)", "replacement":"<img src=\"images/smoker.gif\"/>"}];
+
   /* 
    * Setting the UI once connected
    */
@@ -53,10 +56,22 @@ var WarleagueUI = function(){
   }
 
   /*
+   * Replace every smileys in a string
+   */
+
+   var replaceSmileys = function(message){
+     for(var i=0;i<smileys.length;i++){
+       message = message.replace(smileys[i].syntax, smileys[i].replacement);
+     } 
+     return message;
+   };
+
+  /*
    * Append a message to the chat
    */
   this.appendMessage = function(message){
-    $('<div class=\"chat-message\"></div>').text(message).appendTo('#chat-messages'); 
+    var message = $('<div class=\"chat-message\"></div>').text(message); 
+    message.html(replaceSmileys(message.text())).appendTo('#chat-messages');
     if($("#chat-messages").scrollTop() + $("#chat-messages").height() >= ($("#chat-messages")[0].scrollHeight - 50)) {
       $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
     } 
