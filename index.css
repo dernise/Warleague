@@ -119,6 +119,7 @@ button.connect-button{
 
 #game{
     position: absolute;
+    display:none;
     top:54px;
     left:0px;
 }
