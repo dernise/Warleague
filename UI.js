@@ -1,21 +1,24 @@
 var WarleagueUI = function(){
-  /* 
-   * Initialize the game UI interface 
+  var smileys = [{"syntax":":)", "replacement":"<img src=\"images/smile.png\"/>"},
+                  {"syntax":"(ci)", "replacement":"<img src=\"images/smoker.gif\"/>"}];
+
+  /*
+   * Initialize the window's components sizes
    */
-  this.initUI = function(){
-    //Setting game windows
+  this.updateSizes = function(){
     var chat_height = $( window ).height() - 55;
     var chat_left = $( window ).width() - 342;
     var menu_width = $( window ).width();
     var chat_messages_height = $(window).height() - 115;
+    var game_height = $(window).height() - 54;
+    var game_width = $(window).width() - 342;
+    $("#game").css("width", game_width+ "px");
+    $("#game").css("height", game_height+ "px");
     $("#chat").css("left", chat_left+ "px");
     $("#chat").css("height", chat_height + "px");
     $("#chat-messages").css("height", chat_messages_height +"px");
     $("#header").css("width", menu_width + "px");
   };
-
-  var smileys = [{"syntax":":)", "replacement":"<img src=\"images/smile.png\"/>"},
-                  {"syntax":"(ci)", "replacement":"<img src=\"images/smoker.gif\"/>"}];
 
   /* 
    * Setting the UI once connected
@@ -23,6 +26,9 @@ var WarleagueUI = function(){
   this.startGame = function(){
     $("#header").css("display", "block");
     $("#chat").css("display", "block");
+    $("#game").css("display", "block");
+    this.updateSizes();
+    window.game.render(window.game.ctx);
     $("#login-window").hide();
   };
 

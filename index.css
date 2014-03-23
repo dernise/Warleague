@@ -116,3 +116,10 @@ button.connect-button{
     -webkit-box-shadow: inset 0 -2px 0 -1px #2F3842;
     box-shadow: inset 0 -2px 0 -1px #2F3842;
 }
+
+#game{
+    position: absolute;
+    display:none;
+    top:54px;
+    left:0px;
+}
