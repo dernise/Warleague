@@ -63,6 +63,7 @@ var WarleagueGame = function(){
   }
 
   this.onKey = function(ev, key, down){
+    this.player.body.SetAwake(true);
     switch(key) {
       case KEY.LEFT:  this.player.do_move_left  = down; return false;
       case KEY.RIGHT: this.player.do_move_right = down; return false;
