@@ -56,7 +56,7 @@ var WarleagueGame = function(){
 
   var createWorld = function() {
     world = new b2World(
-      new b2Vec2(0, 20)    //gravity
+      new b2Vec2(0, 25)    //gravity
       ,  true                 //allow sleep
     );
     return world;
@@ -67,7 +67,7 @@ var WarleagueGame = function(){
     switch(key) {
       case KEY.LEFT:  this.player.do_move_left  = down; return false;
       case KEY.RIGHT: this.player.do_move_right = down; return false;
-      //case KEY.SPACE: this.player.jump  = down; return false;
+      case KEY.UP: this.player.do_jump = down; return false;
     }    
   };  
 
@@ -144,8 +144,11 @@ var Player = function(options){
   this.game = options.game;
   this.do_move_left = false;
   this.do_move_right = false;
+  this.do_jump = false;
+  this.can_jump = true;
   this.max_hor_vel = 10;
-  this,max_ver_vel = 20;
+  this.max_ver_vel = 20;
+
   var info = { 
     'density' : 10 ,
     'fixedRotation' : true ,
@@ -153,17 +156,36 @@ var Player = function(options){
     'type' : b2Body.b2_dynamicBody ,
     'restitution' : 0.0 ,
   };
-  this.body = create_sphere(this.game.world , this.x, this.y, this.width, this.height, info);
+  this.body = create_box(this.game.world , this.x, this.y, this.width, this.height, info);
 
   this.tick = function(){
-    if(this.do_move_left)
+    if(this.do_move_left && Math.abs(this.body.GetLinearVelocity().x) <= 1)
     {
       this.add_velocity(new b2Vec2(-10,0));
     }
     
-    if(this.do_move_right)
+    if(this.do_move_right && Math.abs(this.body.GetLinearVelocity().x) <= 1)
     {
       this.add_velocity(new b2Vec2(10,0));
+    }
+
+    //if(Math.abs(this.body.GetLinearVelocity().x) > 0 && !this.do_move_right && !this.do_move_left){
+    //  this.body.SetLinearVelocity(new b2Vec2(0,Math.abs(this.body.GetLinearVelocity().y)));
+    //}
+
+    if(Math.abs(this.body.GetLinearVelocity().y) == 0.0)
+    {
+      this.can_jump = true;
+    }
+
+    if(this.do_jump && this.can_jump){
+      currVell = Math.abs(this.body.GetLinearVelocity().y);
+      
+      if(currVell > 0.0)
+        this.add_velocity(new b2Vec2(0,-currVell));
+      
+      this.add_velocity(new b2Vec2(0,-12));
+      this.can_jump = false;
     }
   };
   
@@ -184,7 +206,7 @@ var Player = function(options){
     {
       v.x = this.max_hor_vel * v.x/Math.abs(v.x);
     }
-    
+
     //set the new velocity
     b.SetLinearVelocity(v);
   }
