@@ -159,12 +159,12 @@ var Player = function(options){
   this.body = create_box(this.game.world , this.x, this.y, this.width, this.height, info);
 
   this.tick = function(){
-    if(this.do_move_left && Math.abs(this.body.GetLinearVelocity().x) <= 1)
+    if(this.do_move_left)
     {
       this.add_velocity(new b2Vec2(-10,0));
     }
     
-    if(this.do_move_right && Math.abs(this.body.GetLinearVelocity().x) <= 1)
+    if(this.do_move_right)
     {
       this.add_velocity(new b2Vec2(10,0));
     }
