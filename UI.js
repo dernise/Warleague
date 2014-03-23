@@ -28,7 +28,7 @@ var WarleagueUI = function(){
     $("#chat").css("display", "block");
     $("#game").css("display", "block");
     this.updateSizes();
-    window.game.render(window.game.ctx);
+    window.game.startGame(window.game.ctx);
     $("#login-window").hide();
   };
 
