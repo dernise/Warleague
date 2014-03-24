@@ -20,14 +20,8 @@ var  b2Vec2 = Box2D.Common.Math.b2Vec2
             ,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef;
 
 window.requestAnimFrame = (function(){
-  return  window.requestAnimationFrame       || 
-    window.webkitRequestAnimationFrame || 
-    window.mozRequestAnimationFrame    || 
-    window.oRequestAnimationFrame      || 
-    window.msRequestAnimationFrame     || 
-    function(/* function */ callback, /* DOMElement */ element){
-      window.setTimeout(callback, 1000 / 60);
-    };
+  return function(/* function */ callback, /* DOMElement */ element){
+           window.setTimeout(callback, 1000 / 30);};
 })();
 
 /*
@@ -73,8 +67,8 @@ var WarleagueGame = function(){
 
   this.startGame = function() {
     ctx.clearRect(0, 0, width, height);
-    $(document).on('keydown', function(ev) { return that.onKey(ev, ev.keyCode, true);  });
-    $(document).on('keyup', function(ev) { return that.onKey(ev, ev.keyCode, false);  });
+    $(document).on('keydown', function(ev) { return that.onKey(ev, ev.keyCode, true);  }); //On keydown
+    $(document).on('keyup', function(ev) { return that.onKey(ev, ev.keyCode, false);  }); // On keyUp
     this.world = createWorld(); //Creates the world object
     this.loadMap(level1); // Loads the map
     that.player = new Player({x : 15, y: 15 , game : this}); //Create a player
@@ -90,6 +84,8 @@ var WarleagueGame = function(){
     debugDraw.SetLineThickness(1.0);
     debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
     this.world.SetDebugDraw(debugDraw);
+
+
     window.requestAnimFrame(update);
   };
 
@@ -125,9 +121,9 @@ var WarleagueGame = function(){
 
   var update = function(){
     this.world.Step(
-         1 / 60   //frame-rate
-      ,  8      //velocity iterations
-      ,  3      //position iterations
+         1 / 30   //frame-rate
+      ,  10      //velocity iterations
+      ,  10      //position iterations
     );
     that.player.tick();
     this.world.DrawDebugData();
@@ -146,8 +142,8 @@ var Player = function(options){
   this.do_move_right = false;
   this.do_jump = false;
   this.can_jump = true;
-  this.max_hor_vel = 10;
-  this.max_ver_vel = 20;
+  this.max_hor_vel = 15;
+  this.max_ver_vel = 15;
 
   var info = { 
     'density' : 10 ,
@@ -158,20 +154,19 @@ var Player = function(options){
   };
   this.body = create_box(this.game.world , this.x, this.y, this.width, this.height, info);
 
+  /*
+   * Update player movements
+   */
   this.tick = function(){
     if(this.do_move_left)
     {
-      this.add_velocity(new b2Vec2(-10,0));
+      this.add_velocity(new b2Vec2(-2,0));
     }
     
     if(this.do_move_right)
     {
-      this.add_velocity(new b2Vec2(10,0));
+      this.add_velocity(new b2Vec2(2,0));
     }
-
-    //if(Math.abs(this.body.GetLinearVelocity().x) > 0 && !this.do_move_right && !this.do_move_left){
-    //  this.body.SetLinearVelocity(new b2Vec2(0,Math.abs(this.body.GetLinearVelocity().y)));
-    //}
 
     if(Math.abs(this.body.GetLinearVelocity().y) == 0.0)
     {
