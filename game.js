@@ -36,17 +36,32 @@ var WarleagueGame = function(){
 
   var MAP      = { tw: 64, th: 48 },
       TILE     = 30,
-      KEY      = { SPACE: 32, LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40 };
+      KEY      = { SPACE: 32, LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40 },
+      GRAVITY = 9.8 * 6, // default (exagerated) gravity
+      MAXDX = 15, // default max horizontal speed (15 tiles per second)
+      MAXDY = 60, // default max vertical speed (60 tiles per second)
+      ACCEL = 1/2, // default take 1/2 second to reach maxdx (horizontal acceleration)
+      FRICTION = 1/6, // default take 1/6 second to stop from maxdx (horizontal friction)
+      IMPULSE = 1500, // default player jump impulse      
+      COLOR  = { BLACK: '#000000', YELLOW: '#ECD078', BRICK: '#D95B43', PINK: '#C02942', PURPLE: '#542437', GREY: '#333', SLATE: '#53777A' },
+      COLORS = [ COLOR.BLACK, COLOR.YELLOW, COLOR.BRICK, COLOR.PINK, COLOR.PURPLE, COLOR.GREY ];
       
-  var canvas   = document.getElementById('game'),
+  var fps = 60,
+      step = 1/fps,
+      canvas   = document.getElementById('game'),
       ctx      = canvas.getContext('2d'),
       width    = canvas.width  = MAP.tw * TILE,
       height   = canvas.height = MAP.th * TILE,
       player   = {},
       cells    = [];
 
-  var cell     = function(x,y)   { return tcell(x,y);    }, 
+  var t2p = function(t) { return t*TILE;             },
+      p2t = function(p) { return Math.floor(p/TILE); },
+      cell     = function(x,y)   { return tcell(t2p(x),t2p(y));    }, 
       tcell    = function(tx,ty) { return cells[tx + (ty*MAP.tw)]; };
+
+  var counter = 0, dt = 0, now,
+      last = timestamp();
 
   var createWorld = function() {
     world = new b2World(
@@ -69,22 +84,9 @@ var WarleagueGame = function(){
     ctx.clearRect(0, 0, width, height);
     $(document).on('keydown', function(ev) { return that.onKey(ev, ev.keyCode, true);  }); //On keydown
     $(document).on('keyup', function(ev) { return that.onKey(ev, ev.keyCode, false);  }); // On keyUp
-    this.world = createWorld(); //Creates the world object
     this.loadMap(level1); // Loads the map
     that.player = new Player({x : 15, y: 15 , game : this}); //Create a player
     this.renderMap(ctx); // Renders the map
-
-    /*
-     *  Renders the frames
-     */
-    var debugDraw = new b2DebugDraw();
-    debugDraw.SetSprite(ctx);
-    debugDraw.SetDrawScale(30);
-    debugDraw.SetFillAlpha(0.3);
-    debugDraw.SetLineThickness(1.0);
-    debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
-    this.world.SetDebugDraw(debugDraw);
-
 
     window.requestAnimFrame(update);
   };
@@ -94,21 +96,12 @@ var WarleagueGame = function(){
    */
   this.renderMap = function(ctx) {
     var x, y, cell;
-    var fixDef = new b2FixtureDef;
-    fixDef.density = 1.0;
-    fixDef.friction = 0.5;
-    fixDef.restitution = 0.2;
-    var bodyDef = new b2BodyDef;
     for(y = 0 ; y < MAP.th ; y++) {
       for(x = 0 ; x < MAP.tw ; x++) {
         cell = tcell(x, y);
         if (cell) {
-          bodyDef.type = b2Body.b2_staticBody;
-          bodyDef.position.x = x;
-          bodyDef.position.y = y;
-          fixDef.shape = new b2PolygonShape;
-          fixDef.shape.SetAsBox(1, 1);
-          this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+          ctx.fillStyle = COLORS[tcell(x,y)];
+          ctx.fillRect(x * TILE, y * TILE, TILE, TILE);
         }
       }
     }
@@ -120,16 +113,10 @@ var WarleagueGame = function(){
   };
 
   var update = function(){
-    this.world.Step(
-         1 / 30   //frame-rate
-      ,  10      //velocity iterations
-      ,  10      //position iterations
-    );
+    that.renderMap(ctx);
     that.player.tick();
-    this.world.DrawDebugData();
-    this.world.ClearForces();
     window.requestAnimFrame(update);
-  }
+  };
 };
 
 var Player = function(options){
@@ -144,16 +131,7 @@ var Player = function(options){
   this.can_jump = true;
   this.max_hor_vel = 15;
   this.max_ver_vel = 15;
-
-  var info = { 
-    'density' : 10 ,
-    'fixedRotation' : true ,
-    'userData' : this ,
-    'type' : b2Body.b2_dynamicBody ,
-    'restitution' : 0.0 ,
-  };
-  this.body = create_box(this.game.world , this.x, this.y, this.width, this.height, info);
-
+  
   /*
    * Update player movements
    */
