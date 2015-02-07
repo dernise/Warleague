@@ -84,11 +84,27 @@ var WarleagueUI = function(){
   };
 
   /*
+   * Check if cookie exist and auto-login
+   */
+  this.autologin = function(){
+    var cookie = $.cookie('usid');
+	
+	if(!cookie){
+	  return;
+	}
+	else{
+	  var login = cookie.split(":");
+      socketClient.sendLoginMessage(login[0], login[1]);
+	}
+  };
+
+  /*
    * Login to the game
    */
   this.login = function(){
     var username = $('#login-username').val();
     var password = $('#login-password').val();
+	var remember = $('#login-remember').prop('checked');
 
     if(!username || !password){
       displayError("You must fill all the fields");
@@ -96,6 +112,10 @@ var WarleagueUI = function(){
     }
 
     socketClient.sendLoginMessage(username, password);
+	
+	if(remember == true){
+	  $.cookie('usid', username +':'+ password, { expires: 1 });
+	}
 
     function displayError(error){
       $("#login-messagebox").html("<div class=\"alert-message\" style=\"background-color:#e74c3c;\">" + error + "</div>");

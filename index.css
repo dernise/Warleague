@@ -20,6 +20,11 @@ input.login-window-field{
     margin-top:20px;
 }
 
+input.login-window-checkbox{
+	margin-top:20px;
+    height:18px;
+}
+
 .alert-message{
     display: block;
     width: 350px;

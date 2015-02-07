@@ -9,10 +9,16 @@
 <script src="lib/ByteBuffer.min.js"></script>
 <script src="network.js"></script>
 <script src="game.js"></script>
+<script src="lib/jquery.cookie.js"></script>
 <script src="UI.js"></script>
 <script src="levels.js"></script>
 <link type="text/css" href="index.css" rel="Stylesheet"/>
 <title>Warleague</title>
+<script type="text/javascript">
+$(document).ready(function() {
+    uiManager.autologin();
+});
+</script>
  
 </head>
 <body>
@@ -21,6 +27,7 @@
 			<div id="login-messagebox"></div>
 			<input type="text" id="login-username" class="login-window-field" placeholder="Username"></input> 
 			<input type="password" id="login-password" class="login-window-field" placeholder="Password"></input> 
+			<input type="checkbox" id="login-remember" class="login-window-checkbox"></input>
 			<button class="connect-button" onclick="uiManager.login();">Connect</button>
 			<button class="connect-button" onclick="uiManager.displayRegister();">Register</button>
 		</div>
