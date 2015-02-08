@@ -14,11 +14,6 @@
 <script src="levels.js"></script>
 <link type="text/css" href="index.css" rel="Stylesheet"/>
 <title>Warleague</title>
-<script type="text/javascript">
-$(document).ready(function() {
-    uiManager.autologin();
-});
-</script>
  
 </head>
 <body>
@@ -27,7 +22,7 @@ $(document).ready(function() {
 			<div id="login-messagebox"></div>
 			<input type="text" id="login-username" class="login-window-field" placeholder="Username"></input> 
 			<input type="password" id="login-password" class="login-window-field" placeholder="Password"></input> 
-			<input type="checkbox" id="login-remember" class="login-window-checkbox"></input>
+			<input type="checkbox" id="login-remember" class="login-window-checkbox" /><label for="login-remember">Stay connected</label>
 			<button class="connect-button" onclick="uiManager.login();">Connect</button>
 			<button class="connect-button" onclick="uiManager.displayRegister();">Register</button>
 		</div>

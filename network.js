@@ -9,6 +9,7 @@ var Network = function(ip, port){
    */
   this.socket.onopen = function(){
     console.log('Connected to the WebSocket server');
+	uiManager.autologin(); // When the network is on, check the cookie
   };
 
   /* 
