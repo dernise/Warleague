@@ -106,6 +106,8 @@ var WarleagueUI = function(){
     var password = $('#login-password').val();
 	var remember = $('#login-remember').prop('checked');
 
+    window.game.setPseudo(username);
+
     if(!username || !password){
       displayError("You must fill all the fields");
       return;

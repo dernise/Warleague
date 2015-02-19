@@ -17,11 +17,16 @@ var Network = function(ip, port){
    */
   this.socket.onmessage = function(e){
     var bytearray = new Uint8Array(e.data);
-    switch(bytearray[0])
+    var reader = ByteBuffer.wrap(bytearray);
+    var opcode = reader.readUint16();  
+
+    switch(opcode)
     {
-      case 2: handleLoginAnswer(bytearray); break;
-      case 4: handleRegisterAnswer(bytearray); break;
-      case 6: handleMessageAnswer(bytearray); break;
+      case 2: handleLoginAnswer(reader); break; //Login
+      case 4: handleMessageAnswer(reader); break; //New message in chat box
+      case 6: handleRegisterAnswer(reader); break; //Register
+      case 7: handleCreatePlayerMessage(reader); break; //Create new player in game
+      case 9: handlePlayerUpdatePos(reader); break; //Update a player's position
       default:
         alert("Received a wrong packet")
     }
@@ -38,7 +43,7 @@ var Network = function(ip, port){
   this.sendRegisterMessage = function(accountName, password, email){
     var bb = new ByteBuffer();
     bb.BE();
-    bb.writeInt8(3);
+    bb.writeInt16(3);
     bb.writeCString(accountName);
     bb.writeCString(CryptoJS.SHA1(accountName.toLowerCase() + ":" + password));
     bb.writeCString(email);
@@ -51,7 +56,7 @@ var Network = function(ip, port){
   this.sendLoginMessage = function(accountName, password){
     var bb = new ByteBuffer();
     bb.BE();
-    bb.writeInt8(1);
+    bb.writeInt16(1);
     bb.writeCString(accountName);
     bb.writeCString(CryptoJS.SHA1(accountName.toLowerCase() + ":" + password));
     this.socket.send(bb.toArrayBuffer());  
@@ -63,11 +68,20 @@ var Network = function(ip, port){
   this.sendMessage = function(message){
     var bb = new ByteBuffer();
     bb.BE();
-    bb.writeInt8(5);
+    bb.writeInt16(3);
     bb.writeCString(message);
     this.socket.send(bb.toArrayBuffer()); 
   };
 
+
+  this.sendPosition = function(x, y){
+    var bb = new ByteBuffer();
+    bb.BE();
+    bb.writeInt16(8);
+    bb.writeDouble(x);
+    bb.writeDouble(y);
+    this.socket.send(bb.toArrayBuffer());
+  }
   /*
    * Handlers
    * Used to parse the packets from the server
@@ -76,31 +90,40 @@ var Network = function(ip, port){
   /* 
    * Handle the message answer 
    */
-  var handleMessageAnswer = function(packet){
-    var reader = ByteBuffer.wrap(packet);
-    var opcode = reader.readUint8();  
-
-    if(opcode != 6)
-      return;    
-
+  var handleMessageAnswer = function(reader){
     var text = reader.readCString();
     window.uiManager.appendMessage(text);
+  };
+
+  /* 
+   * Handle the message answer 
+   */
+  var handleCreatePlayerMessage = function(reader){
+    var playerId = reader.readUint32();
+    var playerName = reader.readCString();
+    window.game.addPlayer(playerId, playerName);
+  };
+
+  /**
+   * Handle a player position change
+   */
+  var handlePlayerUpdatePos = function(reader){
+    var playerId = reader.readUint32(),
+        positionX = reader.readDouble(),
+        positionY = reader.readDouble();
+
+    window.game.updatePos(playerId, positionX, positionY);
+    
   };
 
   /*
    * Handle the login answer
    */
-  var handleLoginAnswer = function(packet){
-    var reader = ByteBuffer.wrap(packet);
-    var opcode = reader.readUint8();  
-
-    if(opcode != 2)
-      return;
-
-    var result = reader.readUint8();
+  var handleLoginAnswer = function(reader){
+    var result = reader.readUint16();
     switch(result){
+      case 0: displayError("Username or password is invalid"); break; 
       case 1: window.uiManager.startGame(); break;
-      case 2: displayError("Username or password is invalid"); break;
     }   
 
     function displayError(error){
@@ -111,13 +134,7 @@ var Network = function(ip, port){
   /*
    * Handle the register answer
    */
-  var handleRegisterAnswer = function(packet){
-    var reader = ByteBuffer.wrap(packet);
-    var opcode = reader.readUint8();
-    
-    if(opcode != 4)
-      return;
-
+  var handleRegisterAnswer = function(reader){
     var result = reader.readUint8();
     switch(result){
       case 1: displayValidate("Sucessfully registered"); break;

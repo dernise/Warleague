@@ -1,6 +1,6 @@
 $(document).ready(function() {
   //initialise network
-  window.socketClient = new Network("realmd.warleague.fr", 8080);
+  window.socketClient = new Network("localhost", 3000);
   //initialise UI
   window.uiManager = new WarleagueUI();
   window.game = new WarleagueGame();
@@ -35,6 +35,10 @@ $( window ).resize(function() { //Resize chat
   window.uiManager.updateSizes();
 });
 
+document.oncontextmenu =function( evt ){
+        return false;
+}
+
 var WarleagueGame = function(){
   var that = this;
 
@@ -43,13 +47,15 @@ var WarleagueGame = function(){
       KEY      = { SPACE: 32, LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40 },
       METER    = TILE,
       GRAVITY  = METER * 9.8 * 6, // exagerated gravity
-      MAXDX    = METER * 60,      // max horizontal speed (20 tiles per second)
-      MAXDY    = METER * 60,      // max vertical speed (60 tiles per second)
+      MAXDX    = METER * 40,      // max horizontal speed (20 tiles per second)
+      MAXDY    = METER * 40,      // max vertical speed (60 tiles per second)
       ACCEL    = MAXDX * 5,       // take 1/2 second to reach maxdx     (horizontal acceleration)
       FRICTION = MAXDX * 6000,       // take 1/6 second to stop from maxdx (horizontal friction)
       JUMP     = METER * 1500,    // (big) instantaneous jump impulse
       COLOR  = { BLACK: '#000000', YELLOW: '#ECD078', BRICK: '#D95B43', PINK: '#C02942', PURPLE: '#542437', GREY: '#333', SLATE: '#53777A' },
-      COLORS = [ COLOR.BLACK, COLOR.YELLOW, COLOR.BRICK, COLOR.PINK, COLOR.PURPLE, COLOR.GREY ];
+      COLORS = [ COLOR.BLACK, COLOR.YELLOW, COLOR.BRICK, COLOR.PINK, COLOR.PURPLE, COLOR.GREY ],
+      LASTPOSX = 0,
+      LASTPOSY = 0;
       
   var fps = 60,
       step = 1/fps,
@@ -58,7 +64,8 @@ var WarleagueGame = function(){
       width    = canvas.width  = MAP.tw * TILE,
       height   = canvas.height = MAP.th * TILE,
       player   = {},
-      cells    = [];
+      cells    = [],
+      players  = [];
 
   var t2p = function(t) { return t*TILE;             },
       p2t = function(p) { return Math.floor(p/TILE); },
@@ -94,16 +101,36 @@ var WarleagueGame = function(){
     }    
   };  
 
+  this.addPlayer = function(id, name)
+  {
+    var player = new Player(id, name);
+    players.push(player);
+  }
+
+  this.updatePos = function(id, posx, posy)
+  {
+    for (var i = 0; i < players.length; i++) {
+      if(players[i].id == id)
+      {
+        players[i].positionX = posx;
+        players[i].positionY = posy;
+      }
+    }
+  }
+
   this.startGame = function() {
     ctx.clearRect(0, 0, width, height);
     $(document).on('keydown', function(ev) { return that.onKey(ev, ev.keyCode, true);  }); //On keydown
     $(document).on('keyup', function(ev) { return that.onKey(ev, ev.keyCode, false);  }); // On keyUp
     this.loadMap(level1); // Loads the map
-    that.player = new Player({x : 15, y: 15 , game : this}); //Create a player
+    that.player = new Controller({x : 15, y: 15 , game : this}); //Create a player
     this.renderMap(ctx); // Renders the map
-
     window.requestAnimFrame(updateFrame);
   };
+
+  this.setPseudo = function(pseudo) {
+    that.pseudo = pseudo;
+  }
 
   /*
    *  Renders the Map
@@ -121,9 +148,38 @@ var WarleagueGame = function(){
     }
   };
 
+  /**
+   * Render the players
+   */
+  this.renderPlayers = function(ctx)
+  {
+    for (var i = 0; i < players.length; i++) {
+      ctx.fillStyle = COLOR.YELLOW;
+      ctx.fillRect(players[i].positionX, players[i].positionY, TILE, TILE);    
+      ctx.fillStyle = "white";
+      ctx.font = "bold 24px Arial";
+      var metrics = ctx.measureText(players[i].username);
+      ctx.fillText(players[i].username, players[i].positionX - ((metrics.width - 30) / 2), players[i].positionY - 20);
+    }  
+  }
+
+  /**
+   * Render the controller
+   */
   this.renderPlayer = function(ctx, dt){
     ctx.fillStyle = COLOR.YELLOW;
     ctx.fillRect(that.player.x + (that.player.dx * dt), that.player.y + (that.player.dy * dt), TILE, TILE);    
+    ctx.fillStyle = "white";
+    ctx.font = "bold 24px Arial";
+    var metrics = ctx.measureText(that.pseudo);
+    ctx.fillText(that.pseudo, that.player.x + (that.player.dx * dt) - ((metrics.width - 30) / 2), that.player.y + (that.player.dy * dt) - 20);
+
+    if(LASTPOSX != that.player.x + (that.player.dx * dt) || LASTPOSY != that.player.y + (that.player.dy * dt))
+    {
+      LASTPOSX = that.player.x + (that.player.dx * dt);
+      LASTPOSY = that.player.y + (that.player.dy * dt);
+      socketClient.sendPosition(LASTPOSX, LASTPOSY);
+    }
   };
 
   this.loadMap = function(map) {
@@ -146,12 +202,19 @@ var WarleagueGame = function(){
       dt = dt - step;
       update(step);
     }
-    console.log(that.player.ddx);
     that.renderMap(ctx);
     that.renderPlayer(ctx, dt);
+    that.renderPlayers(ctx);
     last = now;
     window.requestAnimFrame(updateFrame);
   };
+
+  var Player = function(id, username){
+    this.positionX = 0;
+    this.positionY = 0;
+    this.id = id;
+    this.username = username;
+  }
 
   /*
    *
@@ -159,8 +222,7 @@ var WarleagueGame = function(){
    *  and players' informations
    *
    */ 
-
-  var Player = function(options){
+  var Controller = function(options){
     this.x = options.x;
     this.y = options.y;
     this.dx = 0;
