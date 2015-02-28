@@ -26,7 +26,6 @@
      * Update player movements
      */
     this.tick = function(dt){
-      alert(this.FRICTION);
       var wasleft  = this.dx < 0,
           wasright = this.dx > 0,
           falling    = this.falling,

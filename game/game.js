@@ -143,8 +143,6 @@ var WarleagueGame = function(){
     var metrics = ctx.measureText(that.pseudo);
     ctx.fillText(that.pseudo, that.player.x + (that.player.dx * dt) - ((metrics.width - 30) / 2), that.player.y + (that.player.dy * dt) - 20);
 
-    console.log(that.player.y);
-
     if(LASTPOSX != that.player.x + (that.player.dx * dt) || LASTPOSY != that.player.y + (that.player.dy * dt))
     {
       LASTPOSX = that.player.x + (that.player.dx * dt);
